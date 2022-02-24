@@ -29,7 +29,6 @@ PubSubClient mqttClient(wifiClient);
 int mqttPort = 1883;
 
 int state = 0;
-int state_dt = 1;
 
 int period = 2000;
 unsigned long time_left = 0;
@@ -122,26 +121,27 @@ void loop()
   if (!mqttClient.connected())
     reconnect();
   mqttClient.loop();
-  if (state ==1){
-  int dt = sensorsonic.ultradistancia();
-  if (dt < 10)
+  if (state == 1)
   {
-    state = 0;
-  }
-  else
-  {
-    state = 2;
-  }
+    int dt = sensorsonic.ultradistancia();
+    if (dt < 10)
+    {
+      state = 0;
+    }
+    else
+    {
+      state = 2;
+    }
 
-  if (state == 0)
-  {
-    MotorControl.motorStop(0);
-    MotorControl.motorStop(1);
-    mqttClient.publish("aviso", "stop");    
-  }
+    if (state == 0)
+    {
+      MotorControl.motorStop(0);
+      MotorControl.motorStop(1);
+      mqttClient.publish("aviso", "stop");
+    }
 
-  if (state == 2)
-  {    
+    if (state == 2)
+    {
       mqttClient.publish("aviso", "yey");
       if (digitalRead(LEFT) == 0 && digitalRead(RIGHT) == 0 && digitalRead(CENTER) == 1)
       {
